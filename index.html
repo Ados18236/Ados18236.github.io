@@ -553,7 +553,12 @@ function resetEditor() {
 
 /* ════════════════════════════════════════════
    CLOSE OVERLAYS ON BACKDROP CLICK
+   Stop propagation inside modals so label→input
+   synthetic clicks never bubble up to the overlay.
 ════════════════════════════════════════════ */
+document.querySelectorAll('.overlay .modal').forEach(function(modal) {
+  modal.addEventListener('click', function(e) { e.stopPropagation(); });
+});
 document.getElementById('login-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeLogin();
 });
