@@ -3,66 +3,574 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My website</title>
+  <title id="page-title">Minecraft Servers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet">
   <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --card:      #161b22;
+      --border:    #30363d;
+      --green:     #39d353;
+      --red:       #f85149;
+      --yellow:    #e3b341;
+      --text:      #c9d1d9;
+      --muted:     #8b949e;
+      --accent:    #58a6ff;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px;
+      padding: 40px 16px 100px;
     }
-    .download-btn {
-      margin-top: 20px;
-      padding: 14px 28px;
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    header h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(16px, 4vw, 30px);
+      color: var(--green);
+      text-shadow: 3px 3px 0 #000;
+      line-height: 1.4;
+    }
+    header p.tagline {
+      margin-top: 14px;
+      font-size: 22px;
+      color: var(--muted);
+    }
+
+    /* ── Cards grid ── */
+    .servers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+      width: 100%;
+      max-width: 860px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--accent); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      image-rendering: pixelated;
+      flex-shrink: 0;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .card-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      color: #fff;
+      line-height: 1.5;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       font-size: 18px;
-      background-color: #4CAF50;
-      color: white;
+    }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--muted);
+    }
+    .dot.online  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .dot.offline { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+
+    .status-label { color: var(--muted); }
+    .status-label span { color: var(--text); }
+
+    .card-desc {
+      font-size: 18px;
+      color: var(--muted);
+      line-height: 1.5;
+      min-height: 40px;
+    }
+
+    .address-row {
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .address-text {
+      flex: 1;
+      padding: 8px 12px;
+      font-size: 17px;
+      color: var(--accent);
+      font-family: monospace;
+      word-break: break-all;
+    }
+    .copy-btn {
+      background: var(--border);
       border: none;
-      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 14px;
       cursor: pointer;
-      text-decoration: none;
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
     }
-    .download-btn:hover {
-      background-color: #45a049;
-    }
-    .instructions {
-      margin-top: 28px;
-      max-width: 480px;
-      background: #f8f8f8;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 18px 24px;
-      text-align: left;
+    .copy-btn:hover { background: var(--accent); color: #000; }
+    .copy-btn.copied { background: var(--green); color: #000; }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       font-size: 15px;
-      line-height: 1.7;
     }
-    .instructions ol {
-      margin: 8px 0 0 0;
-      padding-left: 20px;
+    .tag {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 9px;
+      color: var(--muted);
     }
-    .instructions li {
-      margin-bottom: 6px;
+    .tag span { color: var(--text); }
+
+    /* ── Gear / admin button ── */
+    #gear-btn {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .2s, color .2s;
+      z-index: 100;
     }
-    .instructions strong {
-      color: #333;
+    #gear-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Overlay ── */
+    .overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.65);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .overlay.active { display: flex; }
+
+    /* ── Modal ── */
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .modal h2 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      color: var(--green);
+    }
+    .modal label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 16px;
+      color: var(--muted);
+    }
+    .modal input, .modal textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      padding: 8px 12px;
+      outline: none;
+      width: 100%;
+      transition: border-color .15s;
+    }
+    .modal input:focus, .modal textarea:focus { border-color: var(--accent); }
+    .modal textarea { resize: vertical; min-height: 60px; }
+
+    .section-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--yellow);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-top: 4px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 22px;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-primary { background: var(--green); color: #000; }
+    .btn-danger  { background: var(--red);   color: #fff; }
+    .btn-cancel  { background: var(--border); color: var(--text); }
+
+    /* ── Login modal ── */
+    #login-error { color: var(--red); font-size: 16px; display: none; }
+
+    footer {
+      margin-top: 48px;
+      color: var(--muted);
+      font-size: 16px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>My website</h1>
-  <a class="download-btn" href="https://drive.google.com/file/d/1oVCzNByHwEy5P1lLXPbOjKauQq1YwmEZ/view?usp=sharing" target="_blank" rel="noopener">Download Mods</a>
-  <div class="instructions">
-    <strong>How to download:</strong>
-    <ol>
-      <li>Click <strong>Download Mods</strong> — Google Drive opens in a new tab.</li>
-      <li>Click the <strong>download icon</strong> (⬇) in the top-right corner of the page.</li>
-      <li>If Google shows a <em>"Can't scan this file for viruses"</em> warning, click <strong>"Download anyway"</strong>.</li>
-      <li>The real file will then download correctly.</li>
-    </ol>
-    <p style="margin:10px 0 0;font-size:13px;color:#888;">
-      ⚠️ If your browser saves a file ending in <code>.adding</code>, that is Google's warning page — not the mod file. Follow the steps above and use <strong>"Download anyway"</strong>.
-    </p>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header>
+  <h1 id="site-title">⛏ Minecraft Servers</h1>
+  <p class="tagline" id="site-tagline">Join the adventure — pick your server!</p>
+</header>
+
+<!-- ══════════════ SERVER CARDS ══════════════ -->
+<div class="servers" id="servers-container">
+
+  <!-- Server 1 -->
+  <div class="card" id="card-0">
+    <div class="card-header">
+      <div class="card-icon">🗡️</div>
+      <div class="card-name" id="name-0">Survival Server</div>
+    </div>
+    <div class="status-row">
+      <div class="dot" id="dot-0"></div>
+      <div class="status-label" id="status-0">Checking…</div>
+    </div>
+    <div class="card-desc" id="desc-0">Classic survival gameplay. Build, explore and survive with friends.</div>
+    <div class="address-row">
+      <div class="address-text" id="addr-0">minecraft.pavelspacil.cz:25565</div>
+      <button class="copy-btn" onclick="copyAddr(0)">📋 Copy</button>
+    </div>
+    <div class="meta-row" id="meta-0">
+      <div class="tag">Players: <span id="players-0">–</span></div>
+      <div class="tag">Version: <span id="version-0">–</span></div>
+    </div>
   </div>
+
+  <!-- Server 2 -->
+  <div class="card" id="card-1">
+    <div class="card-header">
+      <div class="card-icon">⚔️</div>
+      <div class="card-name" id="name-1">PvP / Mini-games</div>
+    </div>
+    <div class="status-row">
+      <div class="dot" id="dot-1"></div>
+      <div class="status-label" id="status-1">Checking…</div>
+    </div>
+    <div class="card-desc" id="desc-1">Competitive PvP and mini-games. Come test your skills!</div>
+    <div class="address-row">
+      <div class="address-text" id="addr-1">minecraft.pavelspacil.cz:48858</div>
+      <button class="copy-btn" onclick="copyAddr(1)">📋 Copy</button>
+    </div>
+    <div class="meta-row" id="meta-1">
+      <div class="tag">Players: <span id="players-1">–</span></div>
+      <div class="tag">Version: <span id="version-1">–</span></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p id="footer-text">Connect via Minecraft Java Edition</p>
+</footer>
+
+<!-- ══════════════ GEAR BUTTON ══════════════ -->
+<button id="gear-btn" title="Site editor" onclick="openLogin()">⚙</button>
+
+<!-- ══════════════ LOGIN OVERLAY ══════════════ -->
+<div class="overlay" id="login-overlay">
+  <div class="modal" style="max-width:360px">
+    <h2>🔒 Editor Login</h2>
+    <label>Password
+      <input type="password" id="login-pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')submitLogin()">
+    </label>
+    <div id="login-error">Wrong password. Try again.</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="submitLogin()">Enter</button>
+      <button class="btn btn-cancel"  onclick="closeLogin()">Cancel</button>
+    </div>
+    <p style="color:var(--muted);font-size:15px">Default password: <code style="color:var(--accent)">admin123</code></p>
+  </div>
+</div>
+
+<!-- ══════════════ EDITOR OVERLAY ══════════════ -->
+<div class="overlay" id="editor-overlay">
+  <div class="modal">
+    <h2>✏️ Site Editor</h2>
+
+    <div class="section-title">General</div>
+    <label>Page / browser title  <input id="e-page-title"  type="text"></label>
+    <label>Site heading          <input id="e-site-title"  type="text"></label>
+    <label>Tagline               <input id="e-site-tagline" type="text"></label>
+    <label>Footer text           <input id="e-footer-text" type="text"></label>
+
+    <div class="section-title">Server 1</div>
+    <label>Name   <input id="e-name-0" type="text"></label>
+    <label>Address<input id="e-addr-0" type="text"></label>
+    <label>Description<textarea id="e-desc-0"></textarea></label>
+
+    <div class="section-title">Server 2</div>
+    <label>Name   <input id="e-name-1" type="text"></label>
+    <label>Address<input id="e-addr-1" type="text"></label>
+    <label>Description<textarea id="e-desc-1"></textarea></label>
+
+    <div class="section-title">Security</div>
+    <label>Change password (leave blank to keep current)
+      <input id="e-new-pw" type="password" placeholder="New password…">
+    </label>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveEditor()">💾 Save</button>
+      <button class="btn btn-danger"  onclick="resetEditor()">🗑 Reset to defaults</button>
+      <button class="btn btn-cancel"  onclick="closeEditor()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   DEFAULTS
+════════════════════════════════════════════ */
+const DEFAULTS = {
+  pageTitle:   'Minecraft Servers',
+  siteTitle:   '⛏ Minecraft Servers',
+  siteTagline: 'Join the adventure — pick your server!',
+  footerText:  'Connect via Minecraft Java Edition',
+  password:    'admin123',
+  servers: [
+    { name: 'Survival Server',     addr: 'minecraft.pavelspacil.cz:25565', desc: 'Classic survival gameplay. Build, explore and survive with friends.' },
+    { name: 'PvP / Mini-games',    addr: 'minecraft.pavelspacil.cz:48858', desc: 'Competitive PvP and mini-games. Come test your skills!' }
+  ]
+};
+
+/* ════════════════════════════════════════════
+   LOAD / SAVE settings via localStorage
+════════════════════════════════════════════ */
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem('mc_site_settings');
+    return raw ? Object.assign({}, DEFAULTS, JSON.parse(raw)) : Object.assign({}, DEFAULTS);
+  } catch(e) { return Object.assign({}, DEFAULTS); }
+}
+
+function saveSettings(s) {
+  localStorage.setItem('mc_site_settings', JSON.stringify(s));
+}
+
+/* ════════════════════════════════════════════
+   APPLY settings to the DOM
+════════════════════════════════════════════ */
+function applySettings(s) {
+  document.getElementById('page-title').textContent  = s.pageTitle;
+  document.getElementById('site-title').textContent  = s.siteTitle;
+  document.getElementById('site-tagline').textContent = s.siteTagline;
+  document.getElementById('footer-text').textContent = s.footerText;
+  s.servers.forEach((srv, i) => {
+    document.getElementById('name-' + i).textContent = srv.name;
+    document.getElementById('addr-' + i).textContent = srv.addr;
+    document.getElementById('desc-' + i).textContent = srv.desc;
+  });
+}
+
+/* ════════════════════════════════════════════
+   SERVER STATUS (mcsrvstat.us API)
+════════════════════════════════════════════ */
+async function fetchStatus(addr, idx) {
+  try {
+    const res  = await fetch('https://api.mcsrvstat.us/3/' + addr);
+    const data = await res.json();
+    const dot    = document.getElementById('dot-' + idx);
+    const status = document.getElementById('status-' + idx);
+    const players = document.getElementById('players-' + idx);
+    const version = document.getElementById('version-' + idx);
+    if (data.online) {
+      dot.className = 'dot online';
+      status.innerHTML = '<span style="color:var(--green)">Online</span>';
+      players.textContent = (data.players?.online ?? 0) + ' / ' + (data.players?.max ?? '?');
+      version.textContent = data.version ?? '?';
+    } else {
+      dot.className = 'dot offline';
+      status.innerHTML = '<span style="color:var(--red)">Offline</span>';
+      players.textContent = '–';
+      version.textContent = '–';
+    }
+  } catch(_) {
+    document.getElementById('dot-' + idx).className = 'dot offline';
+    document.getElementById('status-' + idx).innerHTML = '<span style="color:var(--muted)">Unknown</span>';
+  }
+}
+
+function refreshStatus() {
+  const s = loadSettings();
+  s.servers.forEach((srv, i) => fetchStatus(srv.addr, i));
+}
+
+/* ════════════════════════════════════════════
+   COPY ADDRESS
+════════════════════════════════════════════ */
+function copyAddr(idx) {
+  const addr = document.getElementById('addr-' + idx).textContent;
+  navigator.clipboard.writeText(addr).then(() => {
+    const btn = document.querySelectorAll('.copy-btn')[idx];
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* ════════════════════════════════════════════
+   LOGIN
+════════════════════════════════════════════ */
+function openLogin() {
+  document.getElementById('login-pw').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-overlay').classList.add('active');
+  setTimeout(() => document.getElementById('login-pw').focus(), 50);
+}
+function closeLogin() {
+  document.getElementById('login-overlay').classList.remove('active');
+}
+function submitLogin() {
+  const s = loadSettings();
+  if (document.getElementById('login-pw').value === s.password) {
+    closeLogin();
+    openEditor();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+/* ════════════════════════════════════════════
+   EDITOR
+════════════════════════════════════════════ */
+function openEditor() {
+  const s = loadSettings();
+  document.getElementById('e-page-title').value   = s.pageTitle;
+  document.getElementById('e-site-title').value   = s.siteTitle;
+  document.getElementById('e-site-tagline').value = s.siteTagline;
+  document.getElementById('e-footer-text').value  = s.footerText;
+  s.servers.forEach((srv, i) => {
+    document.getElementById('e-name-' + i).value = srv.name;
+    document.getElementById('e-addr-' + i).value = srv.addr;
+    document.getElementById('e-desc-' + i).value = srv.desc;
+  });
+  document.getElementById('e-new-pw').value = '';
+  document.getElementById('editor-overlay').classList.add('active');
+}
+function closeEditor() {
+  document.getElementById('editor-overlay').classList.remove('active');
+}
+function saveEditor() {
+  const s = loadSettings();
+  s.pageTitle   = document.getElementById('e-page-title').value.trim()   || s.pageTitle;
+  s.siteTitle   = document.getElementById('e-site-title').value.trim()   || s.siteTitle;
+  s.siteTagline = document.getElementById('e-site-tagline').value.trim() || s.siteTagline;
+  s.footerText  = document.getElementById('e-footer-text').value.trim()  || s.footerText;
+  s.servers.forEach((srv, i) => {
+    srv.name = document.getElementById('e-name-' + i).value.trim() || srv.name;
+    srv.addr = document.getElementById('e-addr-' + i).value.trim() || srv.addr;
+    srv.desc = document.getElementById('e-desc-' + i).value.trim() || srv.desc;
+  });
+  const newPw = document.getElementById('e-new-pw').value;
+  if (newPw) s.password = newPw;
+  saveSettings(s);
+  applySettings(s);
+  refreshStatus();
+  closeEditor();
+}
+function resetEditor() {
+  if (!confirm('Reset everything to defaults?')) return;
+  localStorage.removeItem('mc_site_settings');
+  applySettings(DEFAULTS);
+  refreshStatus();
+  closeEditor();
+}
+
+/* ════════════════════════════════════════════
+   CLOSE OVERLAYS ON BACKDROP CLICK
+════════════════════════════════════════════ */
+document.getElementById('login-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeLogin();
+});
+document.getElementById('editor-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeEditor();
+});
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+(function init() {
+  const s = loadSettings();
+  applySettings(s);
+  refreshStatus();
+  // Auto-refresh status every 60 s
+  setInterval(refreshStatus, 60000);
+})();
+</script>
 </body>
 </html>
