@@ -167,6 +167,29 @@
     }
     .tag span { color: var(--text); }
 
+    /* ── Language toggle button ── */
+    #lang-btn {
+      position: fixed;
+      bottom: 22px;
+      right: 80px;
+      height: 48px;
+      padding: 0 14px;
+      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .2s, color .2s;
+      z-index: 100;
+      letter-spacing: 1px;
+    }
+    #lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+
     /* ── Gear / admin button ── */
     #gear-btn {
       position: fixed;
@@ -299,16 +322,16 @@
     </div>
     <div class="status-row">
       <div class="dot" id="dot-0"></div>
-      <div class="status-label" id="status-0">Checking…</div>
+      <div class="status-label" data-i18n="status-checking" id="status-0">Checking…</div>
     </div>
     <div class="card-desc" id="desc-0">Classic survival gameplay. Build, explore and survive with friends.</div>
     <div class="address-row">
       <div class="address-text" id="addr-0">minecraft.pavelspacil.cz:25565</div>
-      <button class="copy-btn" onclick="copyAddr(0)">📋 Copy</button>
+      <button class="copy-btn" data-i18n="copy" onclick="copyAddr(0)">📋 Copy</button>
     </div>
     <div class="meta-row" id="meta-0">
-      <div class="tag">Players: <span id="players-0">–</span></div>
-      <div class="tag">Version: <span id="version-0">–</span></div>
+      <div class="tag"><span data-i18n="tag-players">Players:</span> <span id="players-0">–</span></div>
+      <div class="tag"><span data-i18n="tag-version">Version:</span> <span id="version-0">–</span></div>
     </div>
   </div>
 
@@ -320,16 +343,16 @@
     </div>
     <div class="status-row">
       <div class="dot" id="dot-1"></div>
-      <div class="status-label" id="status-1">Checking…</div>
+      <div class="status-label" data-i18n="status-checking" id="status-1">Checking…</div>
     </div>
     <div class="card-desc" id="desc-1">Competitive PvP and mini-games. Come test your skills!</div>
     <div class="address-row">
       <div class="address-text" id="addr-1">minecraft.pavelspacil.cz:48858</div>
-      <button class="copy-btn" onclick="copyAddr(1)">📋 Copy</button>
+      <button class="copy-btn" data-i18n="copy" onclick="copyAddr(1)">📋 Copy</button>
     </div>
     <div class="meta-row" id="meta-1">
-      <div class="tag">Players: <span id="players-1">–</span></div>
-      <div class="tag">Version: <span id="version-1">–</span></div>
+      <div class="tag"><span data-i18n="tag-players">Players:</span> <span id="players-1">–</span></div>
+      <div class="tag"><span data-i18n="tag-version">Version:</span> <span id="version-1">–</span></div>
     </div>
   </div>
 
@@ -339,60 +362,163 @@
   <p id="footer-text">Connect via Minecraft Java Edition</p>
 </footer>
 
+<!-- ══════════════ LANGUAGE BUTTON ══════════════ -->
+<button id="lang-btn" onclick="toggleLang()">🌐 EN</button>
+
 <!-- ══════════════ GEAR BUTTON ══════════════ -->
 <button id="gear-btn" title="Site editor" onclick="openLogin()">⚙</button>
 
 <!-- ══════════════ LOGIN OVERLAY ══════════════ -->
 <div class="overlay" id="login-overlay">
   <div class="modal" style="max-width:360px">
-    <h2>🔒 Editor Login</h2>
-    <label>Password
-      <input type="password" id="login-pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')submitLogin()">
+    <h2 data-i18n="login-heading">🔒 Editor Login</h2>
+    <label><span data-i18n="login-label-pw">Password</span>
+      <input type="password" id="login-pw" data-i18n-placeholder="login-pw-placeholder" placeholder="Enter password" onkeydown="if(event.key==='Enter')submitLogin()">
     </label>
-    <div id="login-error">Wrong password. Try again.</div>
+    <div id="login-error" data-i18n="login-error">Wrong password. Try again.</div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="submitLogin()">Enter</button>
-      <button class="btn btn-cancel"  onclick="closeLogin()">Cancel</button>
+      <button class="btn btn-primary" data-i18n="login-btn-enter" onclick="submitLogin()">Enter</button>
+      <button class="btn btn-cancel"  data-i18n="login-btn-cancel" onclick="closeLogin()">Cancel</button>
     </div>
-    <p style="color:var(--muted);font-size:15px">Default password: <code style="color:var(--accent)">admin123</code></p>
+    <p style="color:var(--muted);font-size:15px"><span data-i18n="login-default-pw">Default password:</span> <code style="color:var(--accent)">admin123</code></p>
   </div>
 </div>
 
 <!-- ══════════════ EDITOR OVERLAY ══════════════ -->
 <div class="overlay" id="editor-overlay">
   <div class="modal">
-    <h2>✏️ Site Editor</h2>
+    <h2 data-i18n="editor-heading">✏️ Site Editor</h2>
 
-    <div class="section-title">General</div>
-    <label>Page / browser title  <input id="e-page-title"  type="text"></label>
-    <label>Site heading          <input id="e-site-title"  type="text"></label>
-    <label>Tagline               <input id="e-site-tagline" type="text"></label>
-    <label>Footer text           <input id="e-footer-text" type="text"></label>
+    <div class="section-title" data-i18n="section-general">General</div>
+    <label><span data-i18n="label-page-title">Page / browser title</span>  <input id="e-page-title"  type="text"></label>
+    <label><span data-i18n="label-site-title">Site heading</span>          <input id="e-site-title"  type="text"></label>
+    <label><span data-i18n="label-tagline">Tagline</span>               <input id="e-site-tagline" type="text"></label>
+    <label><span data-i18n="label-footer">Footer text</span>           <input id="e-footer-text" type="text"></label>
 
-    <div class="section-title">Server 1</div>
-    <label>Name   <input id="e-name-0" type="text"></label>
-    <label>Address<input id="e-addr-0" type="text"></label>
-    <label>Description<textarea id="e-desc-0"></textarea></label>
+    <div class="section-title" data-i18n="section-server1">Server 1</div>
+    <label><span data-i18n="label-name">Name</span>   <input id="e-name-0" type="text"></label>
+    <label><span data-i18n="label-address">Address</span><input id="e-addr-0" type="text"></label>
+    <label><span data-i18n="label-desc">Description</span><textarea id="e-desc-0"></textarea></label>
 
-    <div class="section-title">Server 2</div>
-    <label>Name   <input id="e-name-1" type="text"></label>
-    <label>Address<input id="e-addr-1" type="text"></label>
-    <label>Description<textarea id="e-desc-1"></textarea></label>
+    <div class="section-title" data-i18n="section-server2">Server 2</div>
+    <label><span data-i18n="label-name">Name</span>   <input id="e-name-1" type="text"></label>
+    <label><span data-i18n="label-address">Address</span><input id="e-addr-1" type="text"></label>
+    <label><span data-i18n="label-desc">Description</span><textarea id="e-desc-1"></textarea></label>
 
-    <div class="section-title">Security</div>
-    <label>Change password (leave blank to keep current)
-      <input id="e-new-pw" type="password" placeholder="New password…">
+    <div class="section-title" data-i18n="section-security">Security</div>
+    <label><span data-i18n="label-change-pw">Change password (leave blank to keep current)</span>
+      <input id="e-new-pw" type="password" data-i18n-placeholder="pw-placeholder" placeholder="New password…">
     </label>
 
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="saveEditor()">💾 Save</button>
-      <button class="btn btn-danger"  onclick="resetEditor()">🗑 Reset to defaults</button>
-      <button class="btn btn-cancel"  onclick="closeEditor()">Cancel</button>
+      <button class="btn btn-primary" data-i18n="btn-save"  onclick="saveEditor()">💾 Save</button>
+      <button class="btn btn-danger"  data-i18n="btn-reset" onclick="resetEditor()">🗑 Reset to defaults</button>
+      <button class="btn btn-cancel"  data-i18n="btn-cancel" onclick="closeEditor()">Cancel</button>
     </div>
   </div>
 </div>
 
 <script>
+/* ════════════════════════════════════════════
+   INTERNATIONALISATION (EN / CS)
+════════════════════════════════════════════ */
+const STRINGS = {
+  en: {
+    'status-checking':  'Checking…',
+    'status-online':    'Online',
+    'status-offline':   'Offline',
+    'status-unknown':   'Unknown',
+    'copy':             '📋 Copy',
+    'copied':           '✅ Copied!',
+    'tag-players':      'Players:',
+    'tag-version':      'Version:',
+    'login-heading':    '🔒 Editor Login',
+    'login-label-pw':   'Password',
+    'login-pw-placeholder': 'Enter password',
+    'login-btn-enter':  'Enter',
+    'login-btn-cancel': 'Cancel',
+    'login-error':      'Wrong password. Try again.',
+    'login-default-pw': 'Default password:',
+    'editor-heading':   '✏️ Site Editor',
+    'section-general':  'General',
+    'label-page-title': 'Page / browser title',
+    'label-site-title': 'Site heading',
+    'label-tagline':    'Tagline',
+    'label-footer':     'Footer text',
+    'section-server1':  'Server 1',
+    'section-server2':  'Server 2',
+    'label-name':       'Name',
+    'label-address':    'Address',
+    'label-desc':       'Description',
+    'section-security': 'Security',
+    'label-change-pw':  'Change password (leave blank to keep current)',
+    'pw-placeholder':   'New password…',
+    'btn-save':         '💾 Save',
+    'btn-reset':        '🗑 Reset to defaults',
+    'btn-cancel':       'Cancel',
+    'confirm-reset':    'Reset everything to defaults?',
+    'lang-btn':         '🌐 EN',
+  },
+  cs: {
+    'status-checking':  'Zjišťuji…',
+    'status-online':    'Online',
+    'status-offline':   'Offline',
+    'status-unknown':   'Neznámý',
+    'copy':             '📋 Kopírovat',
+    'copied':           '✅ Zkopírováno!',
+    'tag-players':      'Hráči:',
+    'tag-version':      'Verze:',
+    'login-heading':    '🔒 Přihlášení editoru',
+    'login-label-pw':   'Heslo',
+    'login-pw-placeholder': 'Zadej heslo',
+    'login-btn-enter':  'Vstoupit',
+    'login-btn-cancel': 'Zrušit',
+    'login-error':      'Špatné heslo. Zkus to znovu.',
+    'login-default-pw': 'Výchozí heslo:',
+    'editor-heading':   '✏️ Editor webu',
+    'section-general':  'Obecné',
+    'label-page-title': 'Titulek stránky / prohlížeče',
+    'label-site-title': 'Nadpis webu',
+    'label-tagline':    'Podtitulek',
+    'label-footer':     'Text patičky',
+    'section-server1':  'Server 1',
+    'section-server2':  'Server 2',
+    'label-name':       'Název',
+    'label-address':    'Adresa',
+    'label-desc':       'Popis',
+    'section-security': 'Zabezpečení',
+    'label-change-pw':  'Změnit heslo (ponech prázdné pro zachování)',
+    'pw-placeholder':   'Nové heslo…',
+    'btn-save':         '💾 Uložit',
+    'btn-reset':        '🗑 Obnovit výchozí',
+    'btn-cancel':       'Zrušit',
+    'confirm-reset':    'Obnovit vše na výchozí hodnoty?',
+    'lang-btn':         '🌐 CS',
+  }
+};
+
+let currentLang = localStorage.getItem('mc_lang') || 'en';
+
+function t(key) {
+  return (STRINGS[currentLang] && STRINGS[currentLang][key]) || STRINGS['en'][key] || key;
+}
+
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('mc_lang', lang);
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+  document.getElementById('lang-btn').textContent = t('lang-btn');
+}
+
+function toggleLang() {
+  applyLang(currentLang === 'en' ? 'cs' : 'en');
+}
+
 /* ════════════════════════════════════════════
    DEFAULTS
 ════════════════════════════════════════════ */
@@ -450,18 +576,18 @@ async function fetchStatus(addr, idx) {
     const version = document.getElementById('version-' + idx);
     if (data.online) {
       dot.className = 'dot online';
-      status.innerHTML = '<span style="color:var(--green)">Online</span>';
+      status.innerHTML = '<span style="color:var(--green)">' + t('status-online') + '</span>';
       players.textContent = (data.players?.online ?? 0) + ' / ' + (data.players?.max ?? '?');
       version.textContent = data.version ?? '?';
     } else {
       dot.className = 'dot offline';
-      status.innerHTML = '<span style="color:var(--red)">Offline</span>';
+      status.innerHTML = '<span style="color:var(--red)">' + t('status-offline') + '</span>';
       players.textContent = '–';
       version.textContent = '–';
     }
   } catch(_) {
     document.getElementById('dot-' + idx).className = 'dot offline';
-    document.getElementById('status-' + idx).innerHTML = '<span style="color:var(--muted)">Unknown</span>';
+    document.getElementById('status-' + idx).innerHTML = '<span style="color:var(--muted)">' + t('status-unknown') + '</span>';
   }
 }
 
@@ -477,9 +603,9 @@ function copyAddr(idx) {
   const addr = document.getElementById('addr-' + idx).textContent;
   navigator.clipboard.writeText(addr).then(() => {
     const btn = document.querySelectorAll('.copy-btn')[idx];
-    btn.textContent = '✅ Copied!';
+    btn.textContent = t('copied');
     btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+    setTimeout(() => { btn.textContent = t('copy'); btn.classList.remove('copied'); }, 2000);
   });
 }
 
@@ -544,7 +670,7 @@ function saveEditor() {
   closeEditor();
 }
 function resetEditor() {
-  if (!confirm('Reset everything to defaults?')) return;
+  if (!confirm(t('confirm-reset'))) return;
   localStorage.removeItem('mc_site_settings');
   applySettings(DEFAULTS);
   refreshStatus();
@@ -572,6 +698,7 @@ document.getElementById('editor-overlay').addEventListener('click', function(e) 
 (function init() {
   const s = loadSettings();
   applySettings(s);
+  applyLang(currentLang);
   refreshStatus();
   // Auto-refresh status every 60 s
   setInterval(refreshStatus, 60000);
