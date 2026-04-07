@@ -322,7 +322,7 @@
     </div>
     <div class="status-row">
       <div class="dot" id="dot-0"></div>
-      <div class="status-label" data-i18n="status-checking" id="status-0">Checking…</div>
+      <div class="status-label" id="status-0">Checking…</div>
     </div>
     <div class="card-desc" id="desc-0">Classic survival gameplay. Build, explore and survive with friends.</div>
     <div class="address-row">
@@ -343,7 +343,7 @@
     </div>
     <div class="status-row">
       <div class="dot" id="dot-1"></div>
-      <div class="status-label" data-i18n="status-checking" id="status-1">Checking…</div>
+      <div class="status-label" id="status-1">Checking…</div>
     </div>
     <div class="card-desc" id="desc-1">Competitive PvP and mini-games. Come test your skills!</div>
     <div class="address-row">
@@ -500,7 +500,7 @@ const STRINGS = {
 let currentLang = localStorage.getItem('mc_lang') || 'en';
 
 function t(key) {
-  return (STRINGS[currentLang] && STRINGS[currentLang][key]) || STRINGS['en'][key] || key;
+  return STRINGS[currentLang]?.[key] ?? STRINGS['en'][key] ?? key;
 }
 
 function applyLang(lang) {
@@ -517,6 +517,7 @@ function applyLang(lang) {
 
 function toggleLang() {
   applyLang(currentLang === 'en' ? 'cs' : 'en');
+  refreshStatus();
 }
 
 /* ════════════════════════════════════════════
